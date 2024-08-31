@@ -12,11 +12,11 @@ class Game {
 
     initializeGame() {
         let container = this.createDivWithClass("game");
-        for (let i = 1; i < 7; i++) {
-            let wordContainer = this.createDivWithClass(`w-${i}`);
+        for (let ia = 1; ia < 7; ia++) {
+            let wordContainer = this.createDivWithClass(`w-${ia}`);
             wordContainer.setAttribute("class", "word-container");
-            for (let i = 1; i < 7; i++) {
-                let letterContainer = this.createDivWithClass(`lt-${i}`);
+            for (let ib = 1; ib < 7; ib++) {
+                let letterContainer = this.createDivWithClass(`lt-${ib}`);
                 letterContainer.setAttribute("class", "letter-container");
                 let letter = document.createElement("h3");
                 letter.setAttribute("class", "letter");
@@ -58,12 +58,26 @@ class Game {
 }
 
 function onReady() {
-
     const section = document.getElementById("game");
 
-    if (section) {
-        new Game(section, "truc");
-    }
+    fetch("./mots.json") 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des données');
+            }
+            return response.json();
+        })
+        .then(words => {
+            let randomWord = words[Math.floor(Math.random() * words.length)];
+
+            if (section) {
+                new Game(section, randomWord.mot);
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement des données");
+        })
+
 }
 
 document.addEventListener("DOMContentLoaded", onReady);
