@@ -1,6 +1,6 @@
 Une interface avec un formulaire de 6 lettres 
 
-Une grille de 8x6 avec la première lettre du mot secret sur la première ligne
+Une grille de 6x6 avec la première lettre du mot secret sur la première ligne
 
 Un Bouton jouer
 
@@ -10,3 +10,11 @@ Une classe jeu avec
 Si lettre correspond > affichage de la case en rouge. 
 - Une fonction resultat qui annonce la réussite ou la défaite et propose de rejouer
 
+
+BDD
+
+Une table mot
+Une table joueur
+Une table score
+
+Un joueur peut trouver un mot et marquer un point
