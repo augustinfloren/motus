@@ -3,11 +3,15 @@ header {
 }
 
 section {
-    margin-top: 5vh;
+    margin-top: 3vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5vh;
+}
+
+#container {
+    height: 100vh;
 }
 
 .game-container {
@@ -27,8 +31,6 @@ section {
     width: clamp(300px, 80vw, 900px);
     height: 60vh;
     padding: 20px 0px;
-    border: black solid 4px;
-    border-radius: 30px;
 }
 
 .word-container {
@@ -37,7 +39,7 @@ section {
     justify-content: center;
     gap: 5px;
     height: 16.6%;
-    padding: 5px 40px;  
+    padding: 5px 20px;  
 }
 
 .letter-container {
@@ -48,8 +50,6 @@ section {
     width: 16.6%;
     max-width: 117px;
     text-transform: uppercase;
-    border-radius: 10px;
-    border: 2px solid black;
 }
 
 .correct {
@@ -66,14 +66,14 @@ section {
 
 .game-form {
     display: flex;
-    gap: 3vw;
+    justify-content: center;
+    gap: 10px;
     width: clamp(300px, 80vw, 900px);
 }
 
 .game-form input {
-    flex-grow: 2;
+    width: min(50%, 300px);
 }
 
 .game-form button {
-    flex-grow: 1;
 }

@@ -8,9 +8,9 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     </head>
     <body>
-        <div id="container">
+        <div id="container" class="bg-dark">
             <header>
-                <h1>Motus</h1>
+                <h1 class="text-white">Motus</h1>
             </header>
             <section id="game"></section>
             <script src="word.js"></script>
