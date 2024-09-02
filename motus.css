@@ -3,7 +3,7 @@ header {
 }
 
 section {
-    margin-top: 50px;
+    margin-top: 5vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,6 +15,10 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 2vh;
+}
+
+.hidden-word {
+    text-transform: uppercase;
 }
 
 .game {
@@ -46,6 +50,14 @@ section {
     text-transform: uppercase;
     border-radius: 10px;
     border: 2px solid black;
+}
+
+.correct {
+    background-color: red;
+}
+
+.wrong {
+    background-color: yellow;
 }
 
 .letter {
