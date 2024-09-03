@@ -4,6 +4,10 @@ class Game {
      * @param {string} word
      */
     constructor(element, words) {
+        this.test = 1;
+        this.round = 1;
+        this.score = 0;
+        this.newGame = false;
         this.element = element;
         this.word = "";
         this.words = words;
@@ -15,27 +19,29 @@ class Game {
         this.container.appendChild(this.form);
         this.container.appendChild(this.modal);
         this.element.appendChild(this.container);
-        this.round = 1;
-        this.score = 0;
-    }
+    };
 
     generateWord() {
-        let randomWord = this.words[Math.floor(Math.random() * this.words.length)];
-        return randomWord;
-    }
+        this.words.sort(() => Math.random() - 0.5);
+    };
 
     initializeGame() {
-        let word = this.generateWord();
-        this.word = word.mot;
+        this.generateWord();
+        this.word = this.words[this.round-1].mot;
 
         // Création des éléments HTML de la grille du jeu
         let container = this.createDivWithClass("game-board");
         container.classList.add("class", "border", "border-3", "border-primary", "p-3", "rounded");
 
+        const round = document.createElement("h2");
+        round.classList.add("round", "text-light", "text-uppercase");
+        round.textContent = `Mot ${this.round} / ${this.words.length}`;
+
         let firstLetter = document.createElement("div");
         firstLetter.classList.add("badge", "bg-primary", "text-white", "text-uppercase");
 
         let hiddenWord = document.createElement("h2");
+        hiddenWord.classList.add("hidden-word")
         hiddenWord.textContent = `${this.word.charAt(0)} _ _ _ _ _`;
 
         firstLetter.appendChild(hiddenWord);
@@ -56,17 +62,36 @@ class Game {
             };
             container.appendChild(wordContainer);
         }
+        this.container.appendChild(round);
         this.container.appendChild(firstLetter);
         return container;
-    }
+    };
 
     resetGame() {
-        this.round = 1;
+        this.test = 1;
 
-        let word = this.generateWord();
-        this.word = word.mot;
+        if (this.newGame) {
+            this.generateWord();
+            this.newGame = false;
+            this.score = 0;
+            this.round = 1;
+        } else {
+            this.round++;
+        }
 
-        const hiddenWord = this.container.querySelector("h2");
+        this.word = this.words[this.round - 1].mot;
+
+        const nextBtn = this.container.querySelector(".next-btn");
+        nextBtn.remove();
+
+        const form = this.form;
+        form.querySelector("input").style.display = "flex";   
+        form.querySelector("button").style.display = "flex";
+
+        const round = this.container.querySelector(".round");
+        round.textContent = `Mot ${this.round} / ${this.words.length}`;
+
+        const hiddenWord = this.container.querySelector(".hidden-word");
         hiddenWord.textContent = `${this.word.charAt(0)} _ _ _ _ _`;
 
         const letterContainers = this.gameBoard.querySelectorAll(".letter-container");
@@ -75,7 +100,7 @@ class Game {
             container.classList.add("letter-container", "border", "border-primary", "rounded");
             container.firstChild.textContent = "";
         });
-    }
+    };
 
     createModal() {
         const container = document.getElementById("container");
@@ -92,7 +117,7 @@ class Game {
         const replayBtn = document.createElement("button");
         replayBtn.classList.add("btn", "btn-primary");
         replayBtn.textContent = "Rejouer";
-        replayBtn.addEventListener("click", (e) => {
+        replayBtn.addEventListener("click", () => {
             modal.style.display = "none";
             this.resetGame();
         });
@@ -116,19 +141,33 @@ class Game {
         modal.appendChild(save);
 
         return modal;
-    }
+    };
 
-    endGame(victory) {
-        this.modal.querySelector("h2").textContent = victory ? "Gagné !" : "Perdu !";
+    endGame() {
+        this.newGame = true;
+        this.modal.querySelector("h2").textContent = "Partie terminée";
         this.modal.querySelector(".score").textContent = "score : " + this.score;
         this.modal.querySelector(".save").style.display = this.score > 0 ? "flex" : "none";
         this.modal.style.display = "flex";
-    }
+    };
+
+    endRound() {
+        if (this.round === 7) {
+            this.endGame();
+        }
+        const form = this.form;
+        form.querySelector("input").style.display = "none";   
+        form.querySelector("button").style.display = "none";
+        const button = document.createElement("button");
+        button.classList.add("next-btn" ,"btn", "btn-primary");
+        button.textContent = "Mot suivant";
+        button.addEventListener("click", this.resetGame.bind(this));
+        form.appendChild(button);
+    };
 
     submitWord(event) {
-        console.log(this.word)
         event.target.setAttribute("disabled", "true");
-        const lettersContainer = this.gameBoard.querySelector(`.w-${this.round}`);
+        const lettersContainer = this.gameBoard.querySelector(`.w-${this.test}`);
         const secret = Array.from(this.word).map((letter, index) => ({ letter, index, "checked" : false }));
         const attempt = Array.from(event.target.parentNode.querySelector("input").value);
         const input = event.target.parentNode.querySelector("input");
@@ -163,22 +202,20 @@ class Game {
                 }
             } else {
                 letter.classList.add("text-white");
-            }
-        }
+            };
+        };
         // Vérification du mot entier
         let correctLetters = secret.filter((letter) => letter.position);
-        let victory = false;
 
         if (correctLetters.length === 6) {
-            victory = true;
             this.score++;
-            this.endGame(victory);
-        } else if (this.round === 6) {
-            this.endGame(victory);
-        }
+            this.endRound();
+        } else if (this.test === 6) {
+            this.endRound();
+        };
 
-        this.round++;
-    }
+        this.test++;
+    };
 
     checkInput(event) {
         const value = event.target.value;
@@ -190,7 +227,7 @@ class Game {
         } else {
             btn.setAttribute("disabled", true);
         }
-    }
+    };
     
     createForm() {
         let container = this.createDivWithClass("game-form");
@@ -214,13 +251,13 @@ class Game {
         container.appendChild(input);
         container.appendChild(button);
         return container;
-    }
+    };
     
     createDivWithClass(className) {
         let div = document.createElement("div");
         div.setAttribute("class", className);
         return div;
-    }
+    };
 }
 
 function onReady() {

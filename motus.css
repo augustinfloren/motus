@@ -25,10 +25,6 @@ section {
     gap: 2vh;
 }
 
-.hidden-word {
-    text-transform: uppercase;
-}
-
 .game-board {
     display: flex;
     flex-direction: column;

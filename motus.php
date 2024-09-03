@@ -9,8 +9,8 @@
     </head>
     <body>
         <div id="container" class="bg-dark">
-            <header>
-                <h1 class="text-white">Motus</h1>
+            <header class="bg-primary">
+                <h1 class="text-white display-2">Motus</h1>
             </header>
             <section id="game"></section>
             <script src="word.js"></script>
