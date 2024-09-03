@@ -21,12 +21,18 @@ class Game {
         this.element.appendChild(this.container);
     };
 
-    generateWord() {
+    /**
+     * Tri alétoirement le tableau des mots
+     */
+    randomizeWords() {
         this.words.sort(() => Math.random() - 0.5);
     };
-
+    
+    /**
+     * @returns {HTMLElement}
+     */
     initializeGame() {
-        this.generateWord();
+        this.randomizeWords();
         this.word = this.words[this.round-1].mot;
 
         // Création des éléments HTML de la grille du jeu
@@ -67,11 +73,14 @@ class Game {
         return container;
     };
 
+    /**
+     * Réinitialise le jeu et le score selon le cas
+     */
     resetGame() {
         this.test = 1;
 
         if (this.newGame) {
-            this.generateWord();
+            this.randomizeWords();
             this.newGame = false;
             this.score = 0;
             this.round = 1;
@@ -102,6 +111,10 @@ class Game {
         });
     };
 
+    /**
+     * Ajoute la modale de fin de partie dans le DOM
+     * @returns {HTMLElement}
+     */
     createModal() {
         const container = document.getElementById("container");
 
@@ -143,6 +156,9 @@ class Game {
         return modal;
     };
 
+    /**
+     * Ouvre la modale de fin de partie et affiche le score
+     */
     endGame() {
         this.newGame = true;
         this.modal.querySelector("h2").textContent = "Partie terminée";
@@ -151,6 +167,10 @@ class Game {
         this.modal.style.display = "flex";
     };
 
+    /**
+     * Gère la fin d'une manche
+     * @param {boolean} victory 
+     */
     endRound(victory) {
         if (this.round === 7) {
             this.endGame();
@@ -169,6 +189,10 @@ class Game {
         form.appendChild(button);
     };
 
+    /**
+     * Vérification du mot essayé 
+     * @param {event} event 
+     */
     submitWord(event) {
         event.target.setAttribute("disabled", "true");
         const lettersContainer = this.gameBoard.querySelector(`.w-${this.test}`);
@@ -222,6 +246,10 @@ class Game {
         this.test++;
     };
 
+    /**
+     * 
+     * @param {event} event 
+     */
     checkInput(event) {
         const value = event.target.value;
         const regex = "^[a-zA-Z]{6}$";
@@ -234,6 +262,10 @@ class Game {
         }
     };
     
+    /**
+     * 
+     * @returns {HTMLElement}
+     */
     createForm() {
         let container = this.createDivWithClass("game-form");
         let input = document.createElement("input");
@@ -258,6 +290,11 @@ class Game {
         return container;
     };
     
+    /**
+     * Créé une div avec une classe
+     * @param {string} className 
+     * @returns {HTMLElement}
+     */
     createDivWithClass(className) {
         let div = document.createElement("div");
         div.setAttribute("class", className);
