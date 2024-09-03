@@ -12,11 +12,13 @@
             <header class="bg-primary">
                 <h1 class="text-white display-2">Motus</h1>
                 <nav>
-                    <a href="/motus/scores.php" class="scores-link btn btn-secondary text-light">Scores</a>
+                    <a href="/motus/motus.php" class="scores-link btn btn-secondary text-light">Nouveau jeu</a>
                 </nav>
             </header>
-            <section id="game"></section>
-            <script src="word.js"></script>
+            <section id="scores">
+                <h2 class="display-2 text-secondary">Scores</h2>
+                <h3 class="fs-1 text-light">John : 3</h3>
+            </section>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
             <footer></footer>
         </div>

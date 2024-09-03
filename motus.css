@@ -3,7 +3,15 @@ h2 {
 }
 
 header {
-    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5vw;
+}
+
+.scores-link {
+    font-size: min(3vw, 25px) !important;
+    text-decoration: none !important;
 }
 
 section {
