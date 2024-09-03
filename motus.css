@@ -29,23 +29,12 @@ section {
     text-transform: uppercase;
 }
 
-.game {
+.game-board {
     display: flex;
     flex-direction: column;
     width: clamp(300px, 80vw, 900px);
     height: 60vh;
     padding: 20px 0px;
-}
-
-.replay {
-    align-items: center;
-    gap: 10%;
-}
-
-.save {
-    display: flex;
-    flex-direction: column;
-    gap: 10%;
 }
 
 .word-container {
@@ -90,5 +79,22 @@ section {
     width: min(50%, 300px);
 }
 
-.game-form button {
+.end-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 6%;
+    align-items: center;
+    justify-content: start;
+    backdrop-filter: blur(40px);
+    margin
+}
+
+.end-modal h2 {
+    margin-top: 10%;
+}
+
+.save {
+    display: none;
+    flex-direction: column;
+    gap: 10%;
 }
