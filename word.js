@@ -37,14 +37,14 @@ class Game {
         round.classList.add("round", "text-light", "text-uppercase");
         round.textContent = `Mot ${this.round} / ${this.words.length}`;
 
-        let firstLetter = document.createElement("div");
-        firstLetter.classList.add("badge", "bg-primary", "text-white", "text-uppercase");
+        const hiddenWord = document.createElement("div");
+        hiddenWord.classList.add("badge", "bg-primary", "text-white", "text-uppercase");
 
-        let hiddenWord = document.createElement("h2");
-        hiddenWord.classList.add("hidden-word")
-        hiddenWord.textContent = `${this.word.charAt(0)} _ _ _ _ _`;
+        const hiddenLetter = document.createElement("h2");
+        hiddenLetter.classList.add("hidden-letter");
+        hiddenLetter.textContent = `${this.word.charAt(0)} _ _ _ _ _`;
 
-        firstLetter.appendChild(hiddenWord);
+        hiddenWord.appendChild(hiddenLetter);
 
         for (let ia = 1; ia < 7; ia++) {
             let wordContainer = this.createDivWithClass(`w-${ia}`);
@@ -63,7 +63,7 @@ class Game {
             container.appendChild(wordContainer);
         }
         this.container.appendChild(round);
-        this.container.appendChild(firstLetter);
+        this.container.appendChild(hiddenWord);
         return container;
     };
 
@@ -91,8 +91,8 @@ class Game {
         const round = this.container.querySelector(".round");
         round.textContent = `Mot ${this.round} / ${this.words.length}`;
 
-        const hiddenWord = this.container.querySelector(".hidden-word");
-        hiddenWord.textContent = `${this.word.charAt(0)} _ _ _ _ _`;
+        const hiddenLetter = this.container.querySelector(".hidden-letter");
+        hiddenLetter.textContent = `${this.word.charAt(0)} _ _ _ _ _`;
 
         const letterContainers = this.gameBoard.querySelectorAll(".letter-container");
         letterContainers.forEach((container) => {
@@ -151,17 +151,21 @@ class Game {
         this.modal.style.display = "flex";
     };
 
-    endRound() {
+    endRound(victory) {
         if (this.round === 7) {
             this.endGame();
         }
+        const hiddenLetter = this.container.querySelector(".hidden-letter");
+        hiddenLetter.textContent = victory ? "Gagné !" : "Perdu !";
         const form = this.form;
         form.querySelector("input").style.display = "none";   
         form.querySelector("button").style.display = "none";
+
         const button = document.createElement("button");
         button.classList.add("next-btn" ,"btn", "btn-primary");
         button.textContent = "Mot suivant";
         button.addEventListener("click", this.resetGame.bind(this));
+
         form.appendChild(button);
     };
 
@@ -208,8 +212,9 @@ class Game {
         let correctLetters = secret.filter((letter) => letter.position);
 
         if (correctLetters.length === 6) {
+            let victory = true;
             this.score++;
-            this.endRound();
+            this.endRound(victory);
         } else if (this.test === 6) {
             this.endRound();
         };
