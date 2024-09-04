@@ -33,7 +33,7 @@ class Game {
      */
     initializeGame() {
         this.randomizeWords();
-        this.word = this.words[this.round-1].mot;
+        this.word = this.words[this.round-1];
 
         // Création des éléments HTML de la grille du jeu
         let container = this.createDivWithClass("game-board");
@@ -88,7 +88,7 @@ class Game {
             this.round++;
         }
 
-        this.word = this.words[this.round - 1].mot;
+        this.word = this.words[this.round - 1];
 
         const nextBtn = this.container.querySelector(".next-btn");
         nextBtn.remove();
@@ -191,14 +191,13 @@ class Game {
 
     /**
      * Vérification du mot essayé 
-     * @param {event} event 
      */
-    submitWord(event) {
-        event.target.setAttribute("disabled", "true");
+    submitWord() {
+        this.form.querySelector("button").setAttribute("disabled", "true");
         const lettersContainer = this.gameBoard.querySelector(`.w-${this.test}`);
         const secret = Array.from(this.word).map((letter, index) => ({ letter, index }));
         const attempt = Array.from(event.target.parentNode.querySelector("input").value).map((letter, index) => ({ letter, index }));
-        const input = event.target.parentNode.querySelector("input");
+        const input = this.form.querySelector("input");
         input.value = "";
 
         // Lettres bien placée
@@ -304,7 +303,7 @@ class Game {
 function onReady() {
     const section = document.getElementById("game");
 
-    fetch("./mots.json") 
+    fetch("./data/api.php") 
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur lors du chargement des données');
@@ -312,8 +311,10 @@ function onReady() {
             return response.json();
         })
         .then(words => {
-            if (section) {
-                new Game(section, words);
+            if (Array.isArray(words)) {
+                if (section) {
+                    new Game(section, words);
+                }
             }
         })
         .catch(error => {
