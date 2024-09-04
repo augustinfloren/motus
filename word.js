@@ -58,7 +58,7 @@ class Game {
 
             for (let ib = 1; ib < 7; ib++) {
                 let letterContainer = this.createDivWithClass(`lt-${ib}`);
-                letterContainer.classList.add("letter-container", "border", "border-primary", "rounded");
+                letterContainer.classList.add("letter-container", "border", "border-primary", "rounded", "text-white");
 
                 let letter = document.createElement("h3");
                 letter.classList.add("letter");
@@ -106,7 +106,7 @@ class Game {
         const letterContainers = this.gameBoard.querySelectorAll(".letter-container");
         letterContainers.forEach((container) => {
             container.classList.remove(...container.classList);
-            container.classList.add("letter-container", "border", "border-primary", "rounded");
+            container.classList.add("letter-container", "border", "border-primary", "rounded", "text-light");
             container.firstChild.textContent = "";
         });
     };
@@ -172,7 +172,7 @@ class Game {
      * @param {boolean} victory 
      */
     endRound(victory) {
-        if (this.round === 7) {
+        if (this.round === this.words.length) {
             this.endGame();
         }
         const hiddenLetter = this.container.querySelector(".hidden-letter");
@@ -196,45 +196,44 @@ class Game {
     submitWord(event) {
         event.target.setAttribute("disabled", "true");
         const lettersContainer = this.gameBoard.querySelector(`.w-${this.test}`);
-        const secret = Array.from(this.word).map((letter, index) => ({ letter, index, "checked" : false }));
-        const attempt = Array.from(event.target.parentNode.querySelector("input").value);
+        const secret = Array.from(this.word).map((letter, index) => ({ letter, index }));
+        const attempt = Array.from(event.target.parentNode.querySelector("input").value).map((letter, index) => ({ letter, index }));
         const input = event.target.parentNode.querySelector("input");
         input.value = "";
 
-        for (let i = 0; i < lettersContainer.children.length; i++) {
-            // Lettre tentée
-            const attemptLetter = attempt[i];
-            // Case 
-            const container = lettersContainer.children[i].children[0];
-            container.textContent = attemptLetter;
-            // Cherche occurence pour chaque lettre et vérifie si déjà regardée
-            const match = secret.find (el => el.letter === attemptLetter && !el.checked);
-            // Case de la lettre correspondante à la position de la lettre trouvée
-            const letter = lettersContainer.children[i];
-
-            if (match) {
-                // Lettre secrète correspondante à la position de la lettre essayée
-                const secretLetter = secret[i];
-                // Si bonne position et pas déjà regardée
-                if (match.letter === secretLetter.letter && !match.position) {
-                    // Marque la lettre
-                    secret[match.index].checked = true;
-                    secret[match.index].position = true;
-                    letter.classList.remove("border-primary");
-                    letter.classList.add("bg-danger", "text-white", "border-danger");
-                // Si mauvaise position
-                } else {
-                    secret[match.index].checked = true;
-                    letter.classList.remove("border-primary");
-                    letter.classList.add("bg-warning", "text-dark", "border-warning");
-                }
-            } else {
-                letter.classList.add("text-white");
-            };
+        // Lettres bien placée
+        const match = secret.filter((el, index) =>
+            attempt[index].letter === el.letter
+        );
+        if (match.length > 0) {
+            match.forEach((el) => {
+                // Marquage des lettres dans les deux tableaux
+                attempt[el.index].check = true;
+                secret[el.index].check = true;
+                secret[el.index].position = true;
+                // Cases justes
+                lettersContainer.children[el.index].classList.remove("border-primary");
+                lettersContainer.children[el.index].classList.add("border-danger", "bg-danger", "text-white");
+            });
         };
-        // Vérification du mot entier
-        let correctLetters = secret.filter((letter) => letter.position);
+        
+        attempt.forEach((el, i) => {
+            // Remplissage des cases
+            lettersContainer.children[i].children[0].textContent = el.letter;
+            // Lettre mal placée
+            const wrongPos = secret.find(el2 => el2.letter === el.letter && el2.index !== el.index && !el2.check && !el.check);
+            
+            if (wrongPos) {
+                // Marquage de la lettre
+                secret[wrongPos.index].check = true;
+                // Cases fausses
+                lettersContainer.children[i].classList.remove("border-primary");
+                lettersContainer.children[i].classList.add("border-warning", "bg-warning", "text-dark");
+            }
+        })
 
+        let correctLetters = secret.filter((letter) => letter.position);
+        
         if (correctLetters.length === 6) {
             let victory = true;
             this.score++;
