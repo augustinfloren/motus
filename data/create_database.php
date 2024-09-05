@@ -1,11 +1,6 @@
 <?php
 require 'config.php';
 
-$servername = "localhost";
-$username = "root";
-$password = "Trappist13!"; 
-$dbname = "motus";
-
 $conn = new mysqli($servername, $username, $password);
 
 if ($conn->connect_error) {

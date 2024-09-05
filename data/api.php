@@ -1,35 +1,54 @@
 <?php
-header('Content-Type: application/json');
-require 'config.php';
+require 'config.php'; // Inclure les informations de configuration
+require 'routes.php'; // Inclure le fichier des routes
 
+// Créer une connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+// Vérifier la connexion
 if ($conn->connect_error) {
-    http_response_code(500); 
-    echo json_encode(['error' => 'La connexion à la base de données a échoué.']);
-    exit();
+    die("La connexion a échoué : " . $conn->connect_error);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $sql = "SELECT word FROM word"; 
+// Obtenir la méthode HTTP
+$method = $_SERVER['REQUEST_METHOD'];
 
-    $result = $conn->query($sql);
+// Obtenir l'URI pour déterminer la route
+$request = $_SERVER['REQUEST_URI'];
+$request_uri = $_SERVER['REQUEST_URI'];
+error_log("Requête envoyée : " . $request_uri);
+$request = str_replace("/motus/data/api.php", "", $request); // Supprimer '/api.php' de l'URI
+// Supprimer également les éventuels paramètres GET
+$request = strtok($request, '?');
+error_log("Requête transfromée : " . $request);
 
-    if ($result) {
-        $words = [];
-        while ($row = $result->fetch_assoc()) {
-            $words[] = $row['word'];
+// Définir les routes
+switch ($method) {
+    case 'GET':
+        if ($request === '/words') {
+            getWords($conn);  // Récupérer tous les mots
+        } elseif ($request === '/scores') {
+            getScores($conn);  // Récupérer tous les scores des joueurs
         }
-        
-        echo json_encode($words);
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Erreur lors de l\'exécution de la requête.']);
-    }
-} else {
-    http_response_code(405); 
-    echo json_encode(['error' => 'Méthode HTTP non autorisée.']);
+        break;
+
+    case 'POST':
+        if ($request === '/player') {
+            // Enregistrer un joueur et les mots qu'il a trouvés
+            $data = json_decode(file_get_contents('php://input'), true);
+            if (isset($data['name']) && isset($data['words'])) {
+                savePlayerAndWords($conn, $data['name'], $data['words']);
+            } else {
+                echo json_encode(["status" => "error", "message" => "Données manquantes."]);
+            }
+        }
+        break;
+
+    default:
+        echo json_encode(["status" => "error", "message" => "Méthode HTTP non autorisée."]);
+        break;
 }
 
+// Fermer la connexion
 $conn->close();
 ?>
