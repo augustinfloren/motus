@@ -14,7 +14,7 @@ Créer la base de données : Accédez à http://localhost/motus/data/create_data
 
 Créer les tables : Accédez à http://localhost/motus/data/create_tables.php 
 
-Peupler les données : Accédez à http://localhost/motus/data//populate_word.php 
+Peupler les données : Accédez à http://localhost/motus/data/populate_word.php 
 
 ## Jouer
 
