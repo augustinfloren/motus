@@ -11,6 +11,7 @@ class Game {
         this.element = element;
         this.word = "";
         this.words = words;
+        this.foundWords = [];
         this.container = this.createDivWithClass("game-container");
         this.gameBoard = this.initializeGame();
         this.form = this.createForm();
@@ -32,6 +33,8 @@ class Game {
      * @returns {HTMLElement}
      */
     initializeGame() {
+        this.foundWords = [];
+        this.score = 0;
         this.randomizeWords();
         this.word = this.words[this.round-1];
 
@@ -77,6 +80,7 @@ class Game {
      * Réinitialise le jeu et le score selon le cas
      */
     resetGame() {
+        this.foundWords = [];
         this.test = 1;
 
         if (this.newGame) {
@@ -192,7 +196,7 @@ class Game {
     /**
      * Vérification du mot essayé 
      */
-    submitWord() {
+    submitWord(event) {
         this.form.querySelector("button").setAttribute("disabled", "true");
         const lettersContainer = this.gameBoard.querySelector(`.w-${this.test}`);
         const secret = Array.from(this.word).map((letter, index) => ({ letter, index }));
@@ -236,6 +240,7 @@ class Game {
         if (correctLetters.length === 6) {
             let victory = true;
             this.score++;
+            this.foundWords.push(this.word);
             this.endRound(victory);
         } else if (this.test === 6) {
             this.endRound();
@@ -303,7 +308,7 @@ class Game {
 function onReady() {
     const section = document.getElementById("game");
 
-    fetch("./data/api.php") 
+    fetch("./data/api.php/words") 
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur lors du chargement des données');
