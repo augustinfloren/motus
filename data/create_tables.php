@@ -23,8 +23,7 @@ if ($conn->query($sql) === TRUE) {
 // Joueur
 $sql = "CREATE TABLE IF NOT EXISTS player (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    score_id INT NOT NULL
+    name VARCHAR(255) NOT NULL
 )";
 
 if ($conn->query($sql) === TRUE) {
