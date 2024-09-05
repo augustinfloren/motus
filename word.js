@@ -80,17 +80,12 @@ class Game {
      * Réinitialise le jeu et le score selon le cas
      */
     resetGame() {
-        this.foundWords = [];
-        this.test = 1;
-
-        if (this.newGame) {
+        if (this.round === 1) {
+            this.foundWords = [];
             this.randomizeWords();
-            this.newGame = false;
             this.score = 0;
-            this.round = 1;
-        } else {
-            this.round++;
         }
+        this.test = 1;
 
         this.word = this.words[this.round - 1];
 
@@ -114,6 +109,27 @@ class Game {
             container.firstChild.textContent = "";
         });
     };
+
+    async submitScore() {
+        const name = document.getElementById('name');
+
+        const response = await fetch('./data/api.php/player', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name.value,
+                words: this.foundWords
+            })
+        });
+        
+        const result = await response.json();
+        name.value = '';
+        this.modal.style.display = "none";
+        this.resetGame();
+        alert(result.message);
+    }
 
     /**
      * Ajoute la modale de fin de partie dans le DOM
@@ -142,12 +158,19 @@ class Game {
         const save = this.createDivWithClass("save");
         const saveBtn = document.createElement("button");
         saveBtn.textContent = "Enregistrer son score";
-        saveBtn.classList.add("btn", "btn-secondary")
+        saveBtn.classList.add("btn", "btn-secondary");
         saveBtn.setAttribute("disabled", true);
+        saveBtn.addEventListener("click", this.submitScore.bind(this));
 
         const name = document.createElement("input");
         name.setAttribute("placeholder", "Votre nom");
         name.classList.add("form-control", "border-primary");
+        name.id = "name";
+
+        const regex = "^[A-Za-zÀ-ÿà-ÿ\-'\s]{1,20}$";
+        name.addEventListener("keyup", (event)=> {
+            this.checkInput(event, saveBtn, regex);
+        });
 
         save.appendChild(name);
         save.appendChild(saveBtn);
@@ -164,7 +187,7 @@ class Game {
      * Ouvre la modale de fin de partie et affiche le score
      */
     endGame() {
-        this.newGame = true;
+        this.round = 1;
         this.modal.querySelector("h2").textContent = "Partie terminée";
         this.modal.querySelector(".score").textContent = "score : " + this.score;
         this.modal.querySelector(".save").style.display = this.score > 0 ? "flex" : "none";
@@ -176,7 +199,8 @@ class Game {
      * @param {boolean} victory 
      */
     endRound(victory) {
-        if (this.round === this.words.length) {
+        this.round++;
+        if (this.round === this.words.length + 1) {
             this.endGame();
         }
         const hiddenLetter = this.container.querySelector(".hidden-letter");
@@ -253,15 +277,13 @@ class Game {
      * 
      * @param {event} event 
      */
-    checkInput(event) {
+    checkInput(event, button, regex) {
         const value = event.target.value;
-        const regex = "^[a-zA-Z]{6}$";
-        const btn = event.target.parentNode.querySelector("button");
 
         if (value.match(regex)) {
-            btn.removeAttribute('disabled');
+            button.removeAttribute('disabled');
         } else {
-            btn.setAttribute("disabled", true);
+            button.setAttribute("disabled", true);
         }
     };
     
@@ -285,8 +307,11 @@ class Game {
         button.setAttribute("disabled", true);
         button.textContent = "Envoyer";
         button.addEventListener("click", this.submitWord.bind(this));
-
-        input.addEventListener("keyup", this.checkInput.bind(this));
+        
+        const regex = "^[a-zA-Z]{6}$";
+        input.addEventListener("keyup", (event)=> {
+            this.checkInput(event, button, regex);
+        });
 
         container.appendChild(input);
         container.appendChild(button);
