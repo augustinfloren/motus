@@ -4,7 +4,7 @@ Test d'entrée - Formation Bachelor IT
 
 ## Installation
 
-git clone git@github.com:augustinfloren/motus.git
+git clone [git@github.com:augustinfloren/motus.git](https://github.com/augustinfloren/motus.git)
 
 ## BDD
 
